@@ -12,6 +12,6 @@ abstract class User(
     var username: String,
 
     @Column(nullable = false)
-    var password: String,
+    private var password: String,
 
 )

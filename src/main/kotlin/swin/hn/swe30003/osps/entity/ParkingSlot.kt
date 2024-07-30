@@ -9,5 +9,5 @@ class ParkingSlot(
     val id: Long = 0,
 
     @Column(nullable = false)
-    var available: Boolean = true
+    var isAvailable: Boolean = true
 )

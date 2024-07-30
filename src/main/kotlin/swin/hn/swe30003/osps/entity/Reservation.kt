@@ -1,6 +1,7 @@
 package swin.hn.swe30003.osps.entity
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 import java.util.*
 
 @Entity
@@ -17,5 +18,5 @@ class Reservation(
     @JoinColumn(name = "parking_slot_id")
     val parkingSlot: ParkingSlot,
 
-    val reservationTime: Date
+    val reservationTime: LocalDateTime
 )

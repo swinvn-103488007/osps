@@ -9,12 +9,9 @@ import swin.hn.swe30003.osps.entity.Customer
 @Repository
 interface CustomerRepository: JpaRepository<Customer, Long> {
     // You can define custom query methods here
-    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Customer c WHERE c.username = :username")
-    fun isCustomerExist(@Param("username") username: String): Boolean
-
     @Query("SELECT c FROM Customer c WHERE c.username = :username")
-    fun findCustomerByUserName(@Param("username") username: String): List<Customer>
+    fun findCustomerByName(@Param("username") username: String): Customer?
 
-    @Query("SELECT c.password FROM Customer c WHERE c.name = :name")
-    fun getCustomerPassword(@Param("username") username: String): String?
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Customer c WHERE c.id = :id AND c.password = :pwd")
+    fun checkCustomerCredential(@Param("id") userId: Long, @Param("pwd") pwd: String): Boolean
 }
