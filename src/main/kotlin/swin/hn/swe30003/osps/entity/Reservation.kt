@@ -2,7 +2,6 @@ package swin.hn.swe30003.osps.entity
 
 import jakarta.persistence.*
 import java.time.LocalDateTime
-import java.util.*
 
 @Entity
 class Reservation(
@@ -14,18 +13,11 @@ class Reservation(
     @JoinColumn(name = "customer_id")
     val customer: Customer,
 
-
-    @ManyToOne
-    @JoinColumns(
-        JoinColumn(name = "slot_number", referencedColumnName = "number"),
-        JoinColumn(name = "parking_area_id", referencedColumnName = "parkingArea"),
-    )
-//    @JoinColumn(name = "parking_area_id", referencedColumnName = "parkingArea")
-    val parkingSlot: ParkingSlot,
-
-    val creationTime: LocalDateTime,
-    var paidTime: LocalDateTime?,
-    var returnSlotTime: LocalDateTime?
+    val parkingSlotNumber: Int,
+    val parkingArea: String,
+    val createdAt: LocalDateTime,
+    var paidAt: LocalDateTime?,
+    var returnSlotAt: LocalDateTime?
 ) {
 
 }

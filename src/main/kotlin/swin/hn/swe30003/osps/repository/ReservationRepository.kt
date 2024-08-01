@@ -11,10 +11,16 @@ import java.time.LocalDateTime
 interface ReservationRepository: JpaRepository<Reservation, Long> {
 
     @Query("SELECT r FROM Reservation r WHERE r.customer.id = :userId " +
-            "AND r.reservationTime >= :fromDateTime AND r.reservationTime <= :toDateTime")
+            "AND r.createdAt >= :fromDateTime AND r.createdAt<= :toDateTime")
     fun getReservationByCustomerInPeriod(
         @Param("userId") userId: Long,
         @Param("fromDateTime") fromDatetime: LocalDateTime,
         @Param("toDateTime") toDatetime: LocalDateTime,
     ): List<Reservation>
+
+    @Query("SELECT r FROM Reservation r WHERE r.customer.id = :userId AND r.id = :reservationId")
+    fun findByIdAndCustomerId(
+        @Param("userId") userId: Long,
+        @Param("reservationId") reservationId: Long
+    ): Reservation?
 }
