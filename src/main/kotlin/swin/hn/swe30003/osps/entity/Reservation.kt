@@ -14,9 +14,18 @@ class Reservation(
     @JoinColumn(name = "customer_id")
     val customer: Customer,
 
+
     @ManyToOne
-    @JoinColumn(name = "parking_slot_id")
+    @JoinColumns(
+        JoinColumn(name = "slot_number", referencedColumnName = "number"),
+        JoinColumn(name = "parking_area_id", referencedColumnName = "parkingArea"),
+    )
+//    @JoinColumn(name = "parking_area_id", referencedColumnName = "parkingArea")
     val parkingSlot: ParkingSlot,
 
-    val reservationTime: LocalDateTime
-)
+    val creationTime: LocalDateTime,
+    var paidTime: LocalDateTime?,
+    var returnSlotTime: LocalDateTime?
+) {
+
+}

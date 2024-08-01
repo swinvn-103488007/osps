@@ -19,28 +19,28 @@ class CustomerController(
     private val reservationManagerService: ReservationManagerService
 ) {
 
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    @PostMapping("/{userId}/reserve-parking-slot")
-    fun reserveParkingSlot(
-        @PathVariable("userId", required = true) userId: Long,
-        @RequestBody slotId: Long,
-        @RequestBody timeString: String
-    ): ResponseEntity<String> {
-        return try {
-            val reservationTime = LocalDateTime.parse(timeString, formatter)
-            val reservation = reservationManagerService.createReservation(customerId = userId, slotId = slotId, reservationTime)
-            reservationManagerService.saveReservation(reservation)
-
-            val responseBody = objectMapper.writeValueAsString(reservation)
-            ResponseEntity(responseBody, HttpStatus.CREATED)
-        } catch (e: DateTimeParseException) {
-            ResponseEntity("Wrong date time format: ${e.message}", HttpStatus.BAD_REQUEST)
-        } catch (e: Exception) {
-            ResponseEntity("Exception: ${e.message}", HttpStatus.BAD_REQUEST)
-        } catch (e: Error) {
-            ResponseEntity("An unexpected error happened: ${e.message}", HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+//    @PostMapping("/{userId}/reserve-parking-slot")
+//    fun reserveParkingSlot(
+//        @PathVariable("userId", required = true) userId: Long,
+//        @RequestBody slotId: Long,
+//        @RequestBody timeString: String
+//    ): ResponseEntity<String> {
+//        return try {
+//            val reservationTime = LocalDateTime.parse(timeString, formatter)
+//            val reservation = reservationManagerService.createReservation(customerId = userId, slotId = slotId, reservationTime)
+//            reservationManagerService.saveReservation(reservation)
+//
+//            val responseBody = objectMapper.writeValueAsString(reservation)
+//            ResponseEntity(responseBody, HttpStatus.CREATED)
+//        } catch (e: DateTimeParseException) {
+//            ResponseEntity("Wrong date time format: ${e.message}", HttpStatus.BAD_REQUEST)
+//        } catch (e: Exception) {
+//            ResponseEntity("Exception: ${e.message}", HttpStatus.BAD_REQUEST)
+//        } catch (e: Error) {
+//            ResponseEntity("An unexpected error happened: ${e.message}", HttpStatus.INTERNAL_SERVER_ERROR)
+//        }
+//    }
 
     @GetMapping("/{userId}/reservations")
     fun getHistoryReservation(
