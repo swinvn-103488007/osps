@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Include head component -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parking Availability - Parking Management System</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../style/style.css"> <!-- Link to custom CSS -->
+  <style>
+    .grid-view .card {
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Parking System</a>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="login.html">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="register.html">Register</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="availability.html">Parking Availability</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container center-content">
+  <div class="w-75">
+    <h2>Parking Slot Availability</h2>
+    <div class="mb-3">
+      <button id="gridViewButton" class="btn btn-primary">Grid View</button>
+      <button id="listViewButton" class="btn btn-secondary">List View</button>
+    </div>
+    <div id="gridView" class="row">
+      <!-- Row 1 -->
+      <div class="col-md-3 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Slot 1</h5>
+            <p class="card-text">Available</p>
+            <button class="btn btn-success" data-toggle="modal" data-target="#registerSlotModal" data-slot="1">Register Slot</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Slot 2</h5>
+            <p class="card-text">Occupied</p>
+            <button class="btn btn-secondary" disabled>Register Slot</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Slot 3</h5>
+            <p class="card-text">Available</p>
+            <button class="btn btn-success" data-toggle="modal" data-target="#registerSlotModal" data-slot="3">Register Slot</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Slot 4</h5>
+            <p class="card-text">Occupied</p>
+            <button class="btn btn-secondary" disabled>Register Slot</button>
+          </div>
+        </div>
+      </div>
+      <!-- Add more rows/columns as needed for additional slots -->
+    </div>
+    <div id="listView" class="d-none">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Slot Number</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Available</td>
+            <td><button class="btn btn-success" data-toggle="modal" data-target="#registerSlotModal" data-slot="1">Register Slot</button></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Occupied</td>
+            <td><button class="btn btn-secondary" disabled>Register Slot</button></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Available</td>
+            <td><button class="btn btn-success" data-toggle="modal" data-target="#registerSlotModal" data-slot="3">Register Slot</button></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Occupied</td>
+            <td><button class="btn btn-secondary" disabled>Register Slot</button></td>
+          </tr>
+          <!-- Add more rows as needed for additional slots -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Register Parking Slot Modal -->
+<div class="modal fade" id="registerSlotModal" tabindex="-1" role="dialog" aria-labelledby="registerSlotModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerSlotModalLabel">Register Parking Slot</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="slotNumber">Slot Number:</label>
+            <input type="text" class="form-control" id="slotNumber" readonly>
+          </div>
+          <div class="form-group">
+            <label for="vehicleNumber">Vehicle Number:</label>
+            <input type="text" class="form-control" id="vehicleNumber" placeholder="Enter vehicle number">
+          </div>
+          <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include footer component -->
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <span class="text-muted">Parking Management System &copy; 2024</span>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#gridViewButton').click(function() {
+      $('#gridView').removeClass('d-none');
+      $('#listView').addClass('d-none');
+      $('#gridViewButton').addClass('btn-primary').removeClass('btn-secondary');
+      $('#listViewButton').addClass('btn-secondary').removeClass('btn-primary');
+    });
+
+    $('#listViewButton').click(function() {
+      $('#gridView').addClass('d-none');
+      $('#listView').removeClass('d-none');
+      $('#gridViewButton').addClass('btn-secondary').removeClass('btn-primary');
+      $('#listViewButton').addClass('btn-primary').removeClass('btn-secondary');
+    });
+
+    $('#registerSlotModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); // Button that triggered the modal
+      var slot = button.data('slot'); // Extract info from data-* attributes
+      var modal = $(this);
+      modal.find('.modal-body #slotNumber').val(slot);
+    });
+  });
+</script>
+</body>
+</html>
