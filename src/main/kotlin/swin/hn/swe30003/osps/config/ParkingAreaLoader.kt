@@ -15,9 +15,9 @@ class ParkingAreaLoader(
     @Bean
     fun loadParkingAreas() = CommandLineRunner {
         val parkingAreas = listOf(
-            ParkingArea(id = "A", size = 50),
-            ParkingArea(id = "B", size = 50),
-            ParkingArea(id = "C", size = 50)
+            ParkingArea(id = "A"),
+            ParkingArea(id = "B"),
+            ParkingArea(id = "C")
         )
 
         parkingAreas.forEach { area ->

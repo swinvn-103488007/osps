@@ -18,10 +18,7 @@ class ParkingSlotLoader(
     @Bean
     fun loadParkingSlots() = CommandLineRunner {
         parkingAreaRepository.findAll().forEach { area ->
-            // find number of slot needed to create to fill the slot capacity of the area
-
-            //
-            val slots = (1..area.size).map { slotNumber ->
+            val slots = (1..50).map { slotNumber ->
                 ParkingSlot(id = ParkingSlotId(area.id, slotNumber), parkingArea = area, isAvailable = true)
             }
             parkingSlotRepository.saveAll(slots)

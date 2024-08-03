@@ -9,7 +9,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 
 @ControllerAdvice
 class GlobalExceptionHandler {
-
     @ExceptionHandler(HttpMessageNotReadableException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleHttpMessageNotReadableException(ex: HttpMessageNotReadableException): ResponseEntity<ApiError> {

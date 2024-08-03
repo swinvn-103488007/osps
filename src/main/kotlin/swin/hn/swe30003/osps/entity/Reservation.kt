@@ -17,7 +17,7 @@ class Reservation(
     val parkingArea: String,
     val createdAt: LocalDateTime,
     var paidAt: LocalDateTime?,
-    var returnSlotAt: LocalDateTime?
+    var checkoutAt: LocalDateTime?
 ) {
 
 }

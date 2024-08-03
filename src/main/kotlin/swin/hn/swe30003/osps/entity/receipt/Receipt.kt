@@ -1,10 +1,11 @@
-package swin.hn.swe30003.osps.entity
+package swin.hn.swe30003.osps.entity.receipt
 
 import jakarta.persistence.*
+import swin.hn.swe30003.osps.entity.Reservation
 import java.time.LocalDateTime
 
-@Entity
-class Receipt(
+@MappedSuperclass
+abstract class Receipt(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
@@ -13,7 +14,7 @@ class Receipt(
     @JoinColumn(name = "reservation_id")
     val reservation: Reservation,
 
-    val amount: Double,
+    val price: Double,
     val paidTime: LocalDateTime,
     val description: String
 )

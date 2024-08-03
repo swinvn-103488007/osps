@@ -10,7 +10,7 @@ import swin.hn.swe30003.osps.entity.Customer
 @Repository
 interface AdminRepository : JpaRepository<Admin, Long> {
     @Query("SELECT a FROM Admin a WHERE a.username = :username")
-    fun findAdminByName(@Param("username") username: String): Customer?
+    fun findAdminByName(@Param("username") username: String): Admin?
 
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Admin a WHERE a.id = :id AND a.password = :pwd")
     fun checkAdminCredential(@Param("id") userId: Long, @Param("pwd") pwd: String): Boolean
