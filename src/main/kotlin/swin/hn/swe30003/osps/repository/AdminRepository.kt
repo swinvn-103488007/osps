@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import swin.hn.swe30003.osps.entity.Admin
-import swin.hn.swe30003.osps.entity.Customer
 
 @Repository
 interface AdminRepository : JpaRepository<Admin, Long> {
@@ -13,5 +12,5 @@ interface AdminRepository : JpaRepository<Admin, Long> {
     fun findAdminByName(@Param("username") username: String): Admin?
 
     @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Admin a WHERE a.id = :id AND a.password = :pwd")
-    fun checkAdminCredential(@Param("id") userId: Long, @Param("pwd") pwd: String): Boolean
+    fun checkAdminPassword(@Param("id") userId: Long, @Param("pwd") pwd: String): Boolean
 }

@@ -1,44 +1,53 @@
 package swin.hn.swe30003.osps.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.context.ApplicationContext
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import swin.hn.swe30003.osps.entity.Customer
+import swin.hn.swe30003.osps.entity.User
+import swin.hn.swe30003.osps.exception_handler.commonErrorHandler
+import swin.hn.swe30003.osps.exception_handler.commonExceptionHandler
+import swin.hn.swe30003.osps.responses_data.UserResponseData
 import swin.hn.swe30003.osps.service.AdminService
 import swin.hn.swe30003.osps.service.CustomerService
+import swin.hn.swe30003.osps.service.UserService
 
 @RestController
 @RequestMapping("/login")
 class LoginController(
-    private val customerService: CustomerService,
-    private val adminService: AdminService,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val context: ApplicationContext
+
 ) {
     @GetMapping("")
     fun login(
         @RequestParam(required = true) username: String,
         @RequestBody(required = true) password: String,
-        @RequestParam role: String): ResponseEntity<String> {
-        when (role) {
-            "customer" -> {
-                return try {
-                    val successMsg = customerService.validateCustomer(username, password)
-                    ResponseEntity.ok(successMsg)
-                } catch (e: Exception) {
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.message)
-                }
-            }
-            "admin" -> {
-                return try {
-                    val successMsg = adminService.validateAdminCredentials(username, password)
-                    ResponseEntity.ok(successMsg)
-                } catch (e: Exception) {
-                    ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.message)
-                }
-            }
-            else -> {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Some unexpected error happened")
-            }
+        @RequestParam role: String
+    ): ResponseEntity<String> {
+        return try {
+            val service = getService(role) ?: throw Exception("Cannot create user of role $role")
+            val user = service.loginWithCredentials(username, password)
+            val userResponseData = UserResponseData(user.id, user.username)
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(objectMapper.writeValueAsString(userResponseData))
+        } catch (ex: Exception) {
+            commonExceptionHandler(ex, path = "login", objectMapper)
+        } catch (e: Error) {
+            commonErrorHandler(e, path = "login", objectMapper)
+        }
+    }
+
+    private fun getService(role: String): UserService<*>? {
+        return when (role) {
+            "customer" -> context.getBean(CustomerService::class.java)
+            "admin" -> context.getBean(AdminService::class.java)
+            else -> null
         }
     }
 }

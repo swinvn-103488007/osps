@@ -13,5 +13,5 @@ interface CustomerRepository: JpaRepository<Customer, Long> {
     fun findCustomerByName(@Param("username") username: String): Customer?
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Customer c WHERE c.id = :id AND c.password = :pwd")
-    fun checkCustomerCredential(@Param("id") userId: Long, @Param("pwd") pwd: String): Boolean
+    fun checkCustomerPassword(@Param("id") userId: Long, @Param("pwd") pwd: String): Boolean
 }

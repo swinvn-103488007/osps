@@ -1,38 +1,42 @@
 package swin.hn.swe30003.osps.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import swin.hn.swe30003.osps.entity.Customer
 import swin.hn.swe30003.osps.repository.CustomerRepository
 import kotlin.jvm.optionals.getOrNull
 
 @Service
-class CustomerService(
-    private val customerRepo: CustomerRepository,
-) {
+class CustomerService: UserService<Customer>() {
 
-    fun registerCustomer(customer: Customer): Customer {
-        if (customerRepo.findCustomerByName(customer.username) != null) {
-            throw Exception("Username ${customer.username} already exists: ")
-        }
-        return customerRepo.save(customer)
+    @Autowired
+    fun setCustomerRepository(customerRepository: CustomerRepository) {
+        this.repo = customerRepository
+    }
+    private val customerRepo
+        get() = repo as CustomerRepository
+    override fun findUserByUserName(username: String): Customer? {
+        return customerRepo.findCustomerByName(username)
     }
 
-    fun updateDataExistedCustomer(customer: Customer) {
-        if (customerRepo.findById(customer.id).getOrNull() == null) {
+    override fun saveUser(username: String, password: String): Customer {
+        return customerRepo.save(Customer(username, password, null))
+    }
+
+    override fun checkPassword(userId: Long, password: String): Boolean {
+        return customerRepo.checkCustomerPassword(userId, password)
+    }
+
+    fun updateDataOfExistedCustomer(customer: Customer) {
+        if (repo.findById(customer.id).getOrNull() == null) {
             throw Exception("User ${customer.username} is not registered")
         }
-        customerRepo.save(customer)
-    }
-    fun validateCustomer(_name: String, _pwd: String): String {
-        val foundCustomer = customerRepo.findCustomerByName(_name) ?: throw Exception("Can not find such user with such name")
-        if (customerRepo.checkCustomerCredential(foundCustomer.id, _pwd)) {
-            throw Exception("Wrong password")
-        }
-        return "Successfully log in as $_name"
+        repo.save(customer)
     }
 
     fun getCustomerById(id: Long): Customer? {
-        return customerRepo.findById(id).getOrNull()
+        return repo.findById(id).getOrNull()
     }
 }
+
 
