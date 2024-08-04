@@ -11,6 +11,13 @@ const Payment = {
             bankAccount: ''
         }
     },
+    created() {
+      const user = $cookies.get('user')
+      if(user) {
+        this.$emit("authenticated", user);//$emit() function allows you to pass custom events up the component tree.
+        this.$router.replace({ name: "login" });
+      }
+    },
     methods: {
         updateBankAccount(reservationId, pos) {
             this.msg = '';
@@ -41,8 +48,10 @@ const Payment = {
                     this.msg = "Error: "+error;
                 });
         },
-        displayTime(time) {
-            return time.slice(0,10) + ' ' + time.slice(11,19)
+    },
+    mounted() {
+        if(!this.user) {
+          this.$router.replace({ name: "login" });
         }
     },
     // define the template for the component

@@ -67,6 +67,8 @@ const Receipt = {
                         <div class="card-body">
                             <h5 class="card-title">Slot {{i.parkingArea}}{{i.parkingSlotNumber}}</h5>
                             <p class="card-text">Reserved at:<br/> {{displayTime(i.paidAt)}} </p>
+                            <p v-if="i.checkoutAt !== 'null'" class="card-text">Checked-out at:<br/> {{displayTime(i.checkoutAt)}} </p>
+                            <p class="card-text">Price:<br/> $2 </p>
                         </div>
                     </div>
                 </div>

@@ -10,13 +10,6 @@ const Register = {
       },
     }
   },
-  created() {
-    const user = $cookies.get('user')
-    if(user) {
-      this.$emit("authenticated", user);//$emit() function allows you to pass custom events up the component tree.
-      this.$router.replace({ name: "dashboard" });
-    }
-  },
   methods: {
     register() {
       this.msg = '';

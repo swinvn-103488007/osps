@@ -95,6 +95,8 @@ const Invoice = {
                         <div class="card-body">
                             <h5 class="card-title">Slot {{i.parkingArea}}{{i.parkingSlotNumber}}</h5>
                             <p class="card-text">Reserved at:<br/> {{displayTime(i.createdAt)}} </p>
+                            <p v-if="i.checkoutAt !== 'null'" class="card-text">Checked-out at:<br/> {{displayTime(i.checkoutAt)}} </p>
+                            <p class="card-text">Price:<br/> $2 </p>
                             <button class="btn btn-primary mb-2" @click="()=>this.pay(i.id, 'bank-transfer', ii)">Pay by Card</button>
                             <button class="btn btn-secondary" @click="()=>this.pay(i.id, 'cash', ii)">Pay by Cash</button>
                         </div>
