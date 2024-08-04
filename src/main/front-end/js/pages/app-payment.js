@@ -11,15 +11,8 @@ const Payment = {
             bankAccount: ''
         }
     },
-    created() {
-      const user = $cookies.get('user')
-      if(user) {
-        this.$emit("authenticated", user);//$emit() function allows you to pass custom events up the component tree.
-        this.$router.replace({ name: "login" });
-      }
-    },
     methods: {
-        updateBankAccount(reservationId, pos) {
+        updateBankAccount() {
             this.msg = '';
             const requestOptions = {
                 method: 'PUT',
@@ -51,7 +44,7 @@ const Payment = {
     },
     mounted() {
         if(!this.user) {
-          this.$router.replace({ name: "login" });
+            this.$router.replace({ name: "login" });
         }
     },
     // define the template for the component
