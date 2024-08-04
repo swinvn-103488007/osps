@@ -10,7 +10,7 @@ import swin.hn.swe30003.osps.PaymentMethod
 import swin.hn.swe30003.osps.entity.ParkingSlotId
 import swin.hn.swe30003.osps.entity.receipt.BankTransferReceipt
 import swin.hn.swe30003.osps.entity.receipt.CashReceipt
-import swin.hn.swe30003.osps.responses_data.CustomerResponseData
+import swin.hn.swe30003.osps.responses_data.UserResponseData
 import swin.hn.swe30003.osps.responses_data.ReservationResponseData
 import swin.hn.swe30003.osps.responses_data.receipt_response_datas.BankTransferReceiptResponseData
 import swin.hn.swe30003.osps.responses_data.receipt_response_datas.CashReceiptResponseData
@@ -124,7 +124,7 @@ class CustomerController(
             val reservationsResponseData = reservations.map{ reservation ->
                 ReservationResponseData(
                     id = reservation.id,
-                    customer = CustomerResponseData(reservation.customer.id, reservation.customer.username),
+                    customer = UserResponseData(reservation.customer.id, reservation.customer.username),
                     parkingArea = reservation.parkingArea,
                     parkingSlotNumber = reservation.parkingSlotNumber,
                     createdAt = reservation.createdAt.toString(),
@@ -166,7 +166,7 @@ class CustomerController(
         }
         val customer = customerService.getCustomerById(userId) ?: throw Exception("Cannot find customer with such ID")
         customer.bankAccount = newAcc
-        customerService.updateDataExistedCustomer(customer)
+        customerService.updateDataOfExistedCustomer(customer)
         val jsonResponse = """
             {
                 "message": "Successfully update ${customer.username}'s bank account to ${customer.bankAccount}
@@ -194,9 +194,9 @@ class CustomerController(
         @RequestParam("payBy", required = true) payBy: String
     ): ResponseEntity<String> {
         return try {
-            val paymentMethod = when {
-                payBy == "cash" -> PaymentMethod.CASH
-                payBy == "bank-transfer" -> PaymentMethod.BANK_TRANSFER
+            val paymentMethod = when (payBy) {
+                "cash" -> PaymentMethod.CASH
+                "bank-transfer" -> PaymentMethod.BANK_TRANSFER
                 else -> {
                     throw Exception("Cannot recognize payment method")
                 }
@@ -205,7 +205,7 @@ class CustomerController(
             val receipt = reservationManagerService.payReservation(reservationId)
             val reservationResponse = ReservationResponseData(
                 id = receipt.reservation.id,
-                customer = CustomerResponseData(receipt.reservation.customer.id, receipt.reservation.customer.username),
+                customer = UserResponseData(receipt.reservation.customer.id, receipt.reservation.customer.username),
                 parkingArea = receipt.reservation.parkingArea,
                 parkingSlotNumber = receipt.reservation.parkingSlotNumber,
                 createdAt = receipt.reservation.createdAt.toString(),
@@ -260,7 +260,7 @@ class CustomerController(
             if (reservation != null) {
                 val response = ReservationResponseData(
                     id = reservation.id,
-                    customer = CustomerResponseData(reservation.customer.id, reservation.customer.username),
+                    customer = UserResponseData(reservation.customer.id, reservation.customer.username),
                     parkingArea = reservation.parkingArea,
                     parkingSlotNumber = reservation.parkingSlotNumber,
                     createdAt = reservation.createdAt.toString(),
