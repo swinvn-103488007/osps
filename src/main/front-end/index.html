@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="author" content="Group 10">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin - Parking Management System</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../style/style.css"> <!-- Link to custom CSS -->
+  </head>
+
+<body>
+	<div id="app">
+		<app-nav :user="this.authenticatedUser"></app-nav>
+		<router-view @authenticated="setAuthenticatedUser" :user="this.authenticatedUser"></router-view>
+	</div>
+	<!-- Include footer component -->
+	<footer class="footer mt-auto py-3 bg-light">
+		<div class="container">
+			<span class="text-muted">Parking Management System &copy; 2024</span>
+		</div>
+	</footer>
+	
+
+	<script src="./js/constant.js"></script>
+	<script src="./js/vue.js"></script>
+	<script src="./js/jquery.min.js"></script>
+	<script src="./js/popper.min.js"></script>
+	<script src="./js/boostrap.min.js"></script>
+ 	<script src="https://cdn.jsdelivr.net/npm/vuetify@3.1.11/dist/vuetify.min.js"></script>
+	<script src="./js/vue-router.js"></script>
+	<script src="./js/vuejs-paginate.js"></script>
+	<script src="https://unpkg.com/vue-cookies@1.8.4/vue-cookies.js"></script>
+
+
+	<!-- Load the custom component js files -->
+	<script src="./js/components/app-nav.js"></script>
+	<script src="./js/pages/app-availability.js"></script>
+	<script src="./js/pages/app-invoice.js"></script>
+	<script src="./js/pages/app-admin.js"></script>
+	<script src="./js/pages/app-payment.js"></script>
+	<script src="./js/pages/app-login.js"></script>
+	<script src="./js/pages/app-register.js"></script> 
+
+	<!-- Load the custom main js file -->
+	<script src="./js/main.js"></script>
+
+</body>
+
+</html>
