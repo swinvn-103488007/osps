@@ -17,6 +17,7 @@ import swin.hn.swe30003.osps.service.UserService
 
 @RestController
 @RequestMapping("/login")
+@CrossOrigin(origins = ["*"])
 class LoginController(
     val objectMapper: ObjectMapper,
     val context: ApplicationContext
@@ -28,22 +29,21 @@ class LoginController(
         @RequestBody(required = true) password: String,
         @RequestParam role: String
     ): ResponseEntity<String> {
-        try {
+        return try {
             val service = getService(role) ?: throw Exception("Cannot create user of role $role")
             val user = service.loginWithCredentials(username, password)
             System.out.println(user)
             val userResponseData = UserResponseData(user.id, user.username)
-            System.out.println(objectMapper.writeValueAsString(userResponseData))
-            return ResponseEntity
+            ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(objectMapper.writeValueAsString(userResponseData))
         } catch (ex: Exception) {
             System.out.println(ex)
-            return commonExceptionHandler(ex, path = "login", objectMapper)
+            commonExceptionHandler(ex, path = "login", objectMapper)
         } catch (e: Error) {
             System.out.println(e)
-            return commonErrorHandler(e, path = "login", objectMapper)
+            commonErrorHandler(e, path = "login", objectMapper)
         }
     }
 

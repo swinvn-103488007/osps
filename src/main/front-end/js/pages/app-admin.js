@@ -1,5 +1,94 @@
 const Admin = {
-
+    props: {
+      user: {
+        type: [Object, null],
+        required: true
+      }
+    },
+    data() {
+        return {
+            authenticatedUser: this.user,
+            statistic: [],
+            parkingArea: '',
+            number: '',
+            msg: ''
+        }
+    },
+    methods: {
+        loadData() {
+            this.msg = '';
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+            };
+            fetch(
+                BE + "/admin/" + this.user.userId + "/revenue-by-area?"
+                + "areaIds=" + "A,B,C" + '&'
+                + "from=" + "2024-01-01T17:01:40.977748700" + '&'
+                + "to=" + "3000-01-01T17:01:40.977748700",
+                requestOptions
+            )
+                .then( response =>{
+                //turning the response into the usable data
+                return response.json();
+                })
+                .then( data =>{ 
+                //This is the data you wanted to get from url
+                if (data == null) {// didn't find this username password pair
+                    this.msg="Unable to load the statistic.";
+                } else if (!data) {
+                    this.msg = "Failed"
+                } else {
+                    this.statistic = data
+                }
+                })
+                .catch(error => {
+                this.msg = "Error: "+ error;
+                });
+        },
+        addSlot() {
+            this.msg = '';
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+            };
+            fetch(
+                BE + "/admin/" + this.user.userId + "/add-parking-slot?"
+                + "areaId=" + this.parkingArea + '&'
+                + "slotNumber=" + this.number,
+                requestOptions
+            )
+                .then( response =>response.json())
+                .then( data =>{ 
+                //This is the data you wanted to get from url
+                if (data == null) {// didn't find this username password pair
+                    this.msg="Unable to add parking slot."
+                } else if (data?.message?.includes("Successfully")) {
+                    this.msg = data.message
+                } else {
+                    this.msg="Unable to add parking slot."
+                }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.msg = "Error: "+error;
+                });
+        },
+        displayTime(time) {
+            return time.slice(0,10) + ' ' + time.slice(11,19)
+        }
+    },
+    mounted() {
+        if(this.user) {
+          this.loadData()
+        } else {
+          this.$router.replace({ name: "login" });
+        }
+    },
     // define the template for the component
     template: `
     <div class="container full-height">
@@ -8,76 +97,39 @@ const Admin = {
             <h2>Admin Dashboard</h2>
             </div>
         </div>
+        <h5 class="card-title">Statistic Report</h5>
         <div class="row mb-4">
             <!-- Dashboard Cards -->
-            <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-header">Total Parking Areas</div>
-                <div class="card-body">
-                <h5 class="card-title" id="totalAreas">5</h5>
+            <div v-for="(s, is) in statistic" :key="is" class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Parking Area {{s.parkingArea}}</div>
+                    <div class="card-body">
+                        <h5 class="card-title" id="totalAreas">Total Reservation: {{s.totalReservation}}</h5>
+                        <h5 class="card-title" id="totalAreas">Revenue: \${{s.revenue}}</h5>
+                    </div>
                 </div>
-            </div>
-            </div>
-            <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-header">Total Parking Spots</div>
-                <div class="card-body">
-                <h5 class="card-title" id="totalSpots">50</h5>
-                </div>
-            </div>
-            </div>
-            <div class="col-md-4">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-header">Occupied Spots</div>
-                <div class="card-body">
-                <h5 class="card-title" id="occupiedSpots">20</h5>
-                </div>
-            </div>
             </div>
         </div>
         <div class="row mb-4">
-            <!-- Add New Parking Area Form -->
-            <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-body">
-                <h5 class="card-title">Add New Parking Area</h5>
-                <form id="addParkingAreaForm">
-                    <div class="form-group">
-                    <label for="areaName">Area Name:</label>
-                    <input type="text" class="form-control" id="areaName" placeholder="Enter area name" required>
-                    </div>
-                    <div class="form-group">
-                    <label for="areaLocation">Location:</label>
-                    <input type="text" class="form-control" id="areaLocation" placeholder="Enter location" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Area</button>
-                </form>
-                </div>
-            </div>
-            </div>
             <!-- Add New Parking Spot Form -->
-            <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-body">
-                <h5 class="card-title">Add New Parking Spot</h5>
-                <form id="addParkingSpotForm">
-                    <div class="form-group">
-                    <label for="spotArea">Select Area:</label>
-                    <select class="form-control" id="spotArea" required>
-                        <!-- Options will be populated dynamically -->
-                        <option value="">Choose an area</option>
-                        <option value="Area1">Area1</option>
-                        <option value="Area2">Area2</option>
-                    </select>
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Add New Parking Spot</h5>
+                        <form @submit.prevent="addSlot" id="addParkingSpotForm">
+                            <div class="form-group">
+                            <label for="spotArea">Area:</label>
+                            <input type="text" class="form-control" id="area" v-model="parkingArea" placeholder="Enter area ID (A, B, C)" required>
+                            </div>
+                            <div class="form-group">
+                            <label for="spotNumber">Spot Number:</label>
+                            <input type="text" class="form-control" id="spotNumber" v-model="number" placeholder="Enter spot number" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Spot</button>
+                        </form>
+                        <p>{{msg}}</p>
                     </div>
-                    <div class="form-group">
-                    <label for="spotNumber">Spot Number:</label>
-                    <input type="text" class="form-control" id="spotNumber" placeholder="Enter spot number" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Add Spot</button>
-                </form>
                 </div>
-            </div>
             </div>
         </div>
         <div class="row mb-4">

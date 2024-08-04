@@ -13,8 +13,8 @@ const Login = {
   created() {
     const user = $cookies.get('user')
     if(user) {
-      // this.$emit("authenticated", user);//$emit() function allows you to pass custom events up the component tree.
-      // this.$router.replace({ name: "availability" });
+      this.$emit("authenticated", user);//$emit() function allows you to pass custom events up the component tree.
+      this.$router.replace({ name: "availability" });
     }
   },
   methods: {
@@ -22,10 +22,8 @@ const Login = {
       this.msg = '';
       const headers = new Headers()
       headers.append('Content-Type', 'application/json')
-      headers.append('Accept', '*/*')
       const requestOptions = {
         method: 'POST',
-        mode: 'no-cors',
         headers: headers,
         body: JSON.stringify({
           password: this.input.password 
@@ -36,26 +34,24 @@ const Login = {
         + "role=" + this.input.role,
         requestOptions
       )
-      .then(response => {
-        console.log(response)
-        return response.text()
-      }
-      )
+      .then(response => response.json())
       .then( data =>{ 
-        console.log(data)
         //This is the data you wanted to get from url
         if (data == null) {// didn't find this email password pair
           this.msg="Username or password incorrect.";
         } else if (data.message) {
           this.msg = data.message
         } else{
-          // $cookies.set('user', data, '7d')
-          // this.$emit("authenticated", data);//$emit() function allows you to pass custom events up the component tree.
-          // this.$router.replace({ name: "availability" });
+          $cookies.set('user', {...data, role: this.input.role}, '7d')
+          this.$emit("authenticated", {...data, role: this.input.role});//$emit() function allows you to pass custom events up the component tree.
+          if(this.input.role === "customer") {
+            this.$router.replace({ name: "availability" });
+          } else {
+            this.$router.replace({ name: "admin" });
+          }
         }
       })
       .catch(error => {
-        console.log(error)
         this.msg = "Error: "+error;
       });
     },

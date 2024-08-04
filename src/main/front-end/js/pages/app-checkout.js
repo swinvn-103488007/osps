@@ -1,4 +1,4 @@
-const Invoice = {
+const Checkout = {
     props: {
       user: {
         type: [Object, null],
@@ -8,7 +8,7 @@ const Invoice = {
     data() {
         return {
             authenticatedUser: this.user,
-            invoices: []
+            reservations: []
         }
     },
     methods: {
@@ -33,39 +33,39 @@ const Invoice = {
                 .then( data =>{ 
                 //This is the data you wanted to get from url
                 if (data == null) {// didn't find this username password pair
-                    this.msg="Unable to load the reservations.";
+                    this.msg="Unable to load the reservations to checkout.";
                 } else if (!data) {
                     this.msg = "Failed"
                 } else {
-                    this.invoices = data.reservations.filter(r => r.paidAt === "null" && r.checkoutAt !== "null")
+                    this.reservations = data.reservations.filter(r => r.paidAt === "null" && r.checkoutAt === "null")
                 }
                 })
                 .catch(error => {
                 this.msg = "Error: "+ error;
                 });
         },
-        pay(reservationId, type, pos) {
+        checkout(reservationId, pos) {
             this.msg = '';
             const requestOptions = {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json'
                 }
             };
             fetch(
-                BE + "/customer/" + this.user.userId + "/pay-reservation/" + reservationId + "?"
-                + "payBy=" + type,
+                BE + "/customer/" + this.user.userId + "/checkout-reservation?"
+                + "reservationId=" + reservationId,
                 requestOptions
             )
                 .then( response =>response.json())
                 .then( data =>{ 
                 //This is the data you wanted to get from url
                 if (data == null) {// didn't find this username password pair
-                    this.msg="Unable to make pay reservation."
-                } else if (data?.paidTime) {
-                    this.invoices.splice(pos,1)
+                    this.msg="Unable to make checkout."
+                } else if (data?.message.includes("Successfully")) {
+                    this.reservations.splice(pos,1)
                 } else {
-                    this.msg="Unable to pay reservation."
+                    this.msg="Unable to checkout."
                 }
                 })
                 .catch(error => {
@@ -88,15 +88,14 @@ const Invoice = {
     template: `
     <div class="container center-content">
         <div class="w-75">
-            <h2>Invoices</h2>
+            <h2>Occupying Parking Slots</h2>
             <div id="gridView" class="row">
-                <div v-for="(i,ii) in invoices" :key="ii" class="col-md-3 mb-3">
+                <div v-for="(i,ii) in reservations" :key="ii" class="col-md-3 mb-3">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Slot {{i.parkingArea}}{{i.parkingSlotNumber}}</h5>
                             <p class="card-text">Reserved at:<br/> {{displayTime(i.createdAt)}} </p>
-                            <button class="btn btn-primary mb-2" @click="()=>this.pay(i.id, 'bank-transfer', ii)">Pay by Card</button>
-                            <button class="btn btn-secondary" @click="()=>this.pay(i.id, 'cash', ii)">Pay by Cash</button>
+                            <button class="btn btn-primary mb-2" @click="()=>this.checkout(i.id, ii)">Checkout</button>
                         </div>
                     </div>
                 </div>

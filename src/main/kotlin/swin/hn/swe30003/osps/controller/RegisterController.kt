@@ -17,6 +17,7 @@ import swin.hn.swe30003.osps.service.UserService
 
 @RestController
 @RequestMapping("/register")
+@CrossOrigin(origins = ["*"])
 class RegisterController(
     private val objectMapper: ObjectMapper,
     private val context: ApplicationContext

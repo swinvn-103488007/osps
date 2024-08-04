@@ -1,18 +1,110 @@
 const Availability = {
+    props: {
+      user: {
+        type: [Object, null],
+        required: true
+      }
+    },
+    data() {
+        return {
+            authenticatedUser: this.user,
+            selectingSlot: {
+                areaId: '',
+                number: ''
+            },
+            parkingAreas: []
+        }
+    },
+    methods: {
+        loadData() {
+            this.msg = '';
+            const requestOptions = {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+            };
 
+            const fetchParkingSlots = ()=>{
+                fetch(
+                    BE + "/parking-map",
+                    requestOptions
+                )
+                  .then( response =>{
+                    //turning the response into the usable data
+                    return response.json();
+                  })
+                  .then( data =>{ 
+                    //This is the data you wanted to get from url
+                    if (data == null) {// didn't find this username password pair
+                        this.msg="Unable to load the parking slots.";
+                    } else if (!data) {
+                        this.msg = "Failed"
+                    } else {
+                        this.parkingAreas = data
+                    }
+                  })
+                  .catch(error => {
+                    this.msg = "Error: "+error;
+                  });
+            }
+
+            fetchParkingSlots()
+            setInterval(fetchParkingSlots, 30000)
+        },
+        reserve(areaId, number, pos) {
+            this.msg = '';
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+            };
+            fetch(
+                BE + "/customer/" + this.user.userId + "/reserve-parking-slot?"
+                + "areaId=" + areaId + '&'
+                + "slotNumber=" + number,
+                requestOptions
+            )
+                .then( response =>response.json())
+                .then( data =>{ 
+                //This is the data you wanted to get from url
+                if (data == null) {// didn't find this username password pair
+                    this.msg="Unable to make reservation."
+                } else if (data?.message.includes("Successfully") && pos?.length === 2) {
+                    this.parkingAreas[pos[0]].slots[pos[1]].isAvailable = false
+                } else {
+                    this.msg="Unable to make reservation."
+                }
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.msg = "Error: "+error;
+                });
+        }
+    },
+    mounted() {
+        if(this.user) {
+          this.loadData()
+        } else {
+          this.$router.replace({ name: "login" });
+        }
+    },
     // define the template for the component
     template: `
     <div class="container center-content">
         <div class="w-75">
             <h2>Parking Slot Availability</h2>
-            <div id="gridView" class="row">
-            <!-- Row 1 -->
-                <div v-for="i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]" class="col-md-3 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Slot {{i}}</h5>
-                            <p class="card-text">Available</p>
-                            <button class="btn btn-success" data-toggle="modal" data-target="#registerSlotModal" data-slot="1">Register Slot</button>
+            <div v-for="(a,ia) in parkingAreas" :key="a.id">
+                <h3 class="text-left">Parking Area: {{a.id}}</h3>
+                <div id="gridView" class="row">
+                    <div v-for="(p,ip) in a.slots" :key="p.number" class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Slot {{p.number}}</h5>
+                                <p class="card-text">{{p.isAvailable ? "Available" : "Unavailable"}}</p>
+                                <button :disabled="!p.isAvailable" class="btn" :class="{'btn-success': p.isAvailable, 'btn-danger': !p.isAvailable}" @click="()=>this.reserve(p.area, p.number, [ia,ip])">{{p.isAvailable ? "Reserve Slot" : "Reserved"}}</button>
+                            </div>
                         </div>
                     </div>
                 </div>

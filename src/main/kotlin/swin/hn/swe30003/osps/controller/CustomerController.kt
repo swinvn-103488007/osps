@@ -23,6 +23,7 @@ import swin.hn.swe30003.osps.exception_handler.*
 
 @RestController
 @RequestMapping("/customer")
+@CrossOrigin(origins = ["*"])
 class CustomerController(
     private val objectMapper: ObjectMapper,
     private val reservationManagerService: ReservationManagerService,
@@ -48,10 +49,10 @@ class CustomerController(
                 {
                     "message": "Successfully created reservation",
                     "details": {
-                        "customer": ${reservation.customer.username},
-                        "parkingSlot": ${reservation.parkingArea}${reservation.parkingSlotNumber},
-                        "createdAt": ${reservation.createdAt},
-                    },     
+                        "customer": "${reservation.customer.username}",
+                        "parkingSlot": "${reservation.parkingArea}${reservation.parkingSlotNumber}",
+                        "createdAt": "${reservation.createdAt}"
+                    }
                 }
             """.trimIndent()
             ResponseEntity
@@ -90,10 +91,10 @@ class CustomerController(
                 {
                     "message": "Successfully checked out reservation",
                     "details": {
-                        "customer": ${reservation.customer.username},
-                        "parkingSlot": ${reservation.parkingArea}${reservation.parkingSlotNumber},
-                        "checkoutAt": ${reservation.checkoutAt},
-                    },     
+                        "customer": "${reservation.customer.username}",
+                        "parkingSlot": "${reservation.parkingArea}${reservation.parkingSlotNumber}",
+                        "checkoutAt": "${reservation.checkoutAt}"
+                    }
                 }
             """.trimIndent()
             ResponseEntity
@@ -135,12 +136,12 @@ class CustomerController(
             val jsonString = """
                 {
                     "customer": {
-                        "id": ${reservations[0].customer.id},
-                        "name": ${reservations[0].customer.username},
+                        "id": "${reservations[0].customer.id}",
+                        "name": "${reservations[0].customer.username}"
                     },
                     "from": "$fromDateTime",
-                    "to: "$toDateTime",
-                    "reservations": ${objectMapper.writeValueAsString(reservationsResponseData)},
+                    "to": "$toDateTime",
+                    "reservations": ${objectMapper.writeValueAsString(reservationsResponseData)}
                 }
             """.trimIndent()
 
@@ -176,7 +177,7 @@ class CustomerController(
             ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(objectMapper.writeValueAsString(jsonResponse))
+                .body(jsonResponse)
         } catch (ex: Exception) {
             commonExceptionHandler(ex, path = "customer/${userId}/update-bank-account",objectMapper)
         } catch (e: Error) {
@@ -282,18 +283,18 @@ class CustomerController(
         }
     }
 
-    // Note: checkout a reservation
-    @PutMapping("/{userId}/checkout-reservation/{reservationId}")
-    fun checkoutReservation(
-        @PathVariable("userId", required = true) userId: Long,
-        @PathVariable("reservationId", required = true) reservationId: Long
-    ): ResponseEntity<String> {
-//        reservationManagerService.checkoutReservation()
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body("body")
-    }
+//    // Note: checkout a reservation
+//    @PutMapping("/{userId}/checkout-reservation/{reservationId}")
+//    fun checkoutReservation(
+//        @PathVariable("userId", required = true) userId: Long,
+//        @PathVariable("reservationId", required = true) reservationId: Long
+//    ): ResponseEntity<String> {
+////        reservationManagerService.checkoutReservation()
+//        return ResponseEntity
+//            .status(HttpStatus.OK)
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .body("body")
+//    }
 
     private fun validateBankAccountString(account: String): Boolean {
         val regex = "^[A-Z]{2,4}BANK\\d{9,12}$".toRegex()

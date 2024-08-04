@@ -26,9 +26,21 @@ const router = VueRouter.createRouter({
     	props: (route) => ({ user: route.params.user }),
 	},
 	{
+		path: '/checkout',
+		component: Checkout,
+		name:"checkout",
+    	props: (route) => ({ user: route.params.user }),
+	},
+	{
 		path: '/invoice',
 		component: Invoice,
 		name:"invoice",
+    	props: (route) => ({ user: route.params.user }),
+	},
+	{
+		path: '/receipt',
+		component: Receipt,
+		name:"receipt",
     	props: (route) => ({ user: route.params.user }),
 	},
 	{
@@ -43,42 +55,6 @@ const router = VueRouter.createRouter({
 		name:"payment",
     	props: (route) => ({ user: route.params.user }),
 	},
-	// {
-	// 	path: '/',
-	// 	component: Dashboard,
-	// 	name:  'dashboard',
-    // 	props: (route) => ({ user: route.params.user }),
-	// 	meta: {
-	// 		description: 'Home page'
-	// 	}
-	// },
-	// {
-	// 	path: '/search_friend',
-	// 	component: FriendAdd,
-	// 	name:  'search_friend',
-    // 	props: (route) => ({ user: route.params.user }),
-	// 	meta: {
-	// 		description: 'Search for people'
-	// 	}
-	// },
-	// {
-	// 	path: '/my_friend',
-	// 	component: FriendList,
-	// 	name:  'my_friend',
-    // 	props: (route) => ({ user: route.params.user }),
-	// 	meta: {
-	// 		description: 'My friends'
-	// 	}
-	// },
-	// {
-	// 	path: '/post',
-	// 	component: Post,
-	// 	name:  'post',
-    // 	props: (route) => ({ user: route.params.user }),
-	// 	meta: {
-	// 		description: 'Newsfeed'
-	// 	}
-	// },
   ]
 })
 
